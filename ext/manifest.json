@@ -1,68 +1,70 @@
 {
-  "name": "Meet Mute",
-  "short_name": "MeetMute",
-  "author": "Matt Simonis",
-  "version": "0.0.5",
-  "manifest_version": 2,
-  "description": "Easy muting/unmuting for when you're in a Google Meet.",
-  "icons": {
-    "32": "icons/icon32.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
-  "default_locale": "en",
-  "background": {
-    "scripts": [
-      "js/background.js"
+    "name": "Meet Mute",
+    "short_name": "MeetMute",
+    "author": "Marco Moschettini",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "description": "Easy muting/unmuting for when you're in a Google Meet.",
+    "icons": {
+        "32": "icons/icon32.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "default_locale": "en",
+    "background": {
+        "service_worker": "js/background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://meet.google.com/*"
+            ],
+            "js": [
+                "js/meetmute.js"
+            ]
+        }
     ],
-    "persistent": false
-  },
-  "content_scripts": [
-    {
-      "matches": [
+    "action": {
+        "default_icon": {
+            "32": "icons/icon32.png"
+        },
+        "default_title": "Disconnected"
+    },
+    "permissions": [
+        "storage",
+        "scripting"
+    ],
+    "host_permissions": [
         "https://meet.google.com/*"
-      ],
-      "js": [
-        "js/meetmute.js"
-      ]
-    }
-  ],
-  "browser_action": {
-    "default_icon": "icons/icon32.png",
-    "default_title": "Disconnected"
-  },
-  "permissions": [
-    "storage",
-    "https://meet.google.com/*"
-  ],
-  "commands": {
-    "toggle_mute": {
-      "description": "Toggle Mute",
-      "suggested_key": {
-        "default": "Ctrl+Shift+K"
-      },
-      "global": true
+    ],
+    "commands": {
+        "toggle_mute": {
+            "description": "Toggle Mute",
+            "suggested_key": {
+                "default": "Ctrl+Shift+L"
+            },
+            "global": true
+        },
+        "mute": {
+            "description": "Mute",
+            "suggested_key": {
+                "default": "Ctrl+Shift+M"
+            },
+            "global": true
+        },
+        "unmute": {
+            "description": "Unmute",
+            "suggested_key": {
+                "default": "Ctrl+Shift+B"
+            },
+            "global": true
+        }
     },
-    "mute": {
-      "description": "Mute",
-      "suggested_key": {
-        "default": "Ctrl+Shift+M"
-      },
-      "global": true
-    },
-    "unmute": {
-      "description": "Unmute",
-      "suggested_key": {
-        "default": "Ctrl+Shift+B"
-      },
-      "global": true
+    "web_accessible_resources": [{
+        "resources": ["sounds/on.mp3", "sounds/off.mp3"],
+        "matches": ["http://*/*", "https://*/*"]
+    }],
+    "options_ui": {
+        "page": "options.html"
     }
-  },
-  "web_accessible_resources": [
-    "sounds/on.mp3",
-    "sounds/off.mp3"
-  ],
-  "options_ui": {
-    "page": "options.html"
-  }
 }

@@ -3,13 +3,13 @@ chrome.commands.onCommand.addListener((command) => {
 })
 
 chrome.runtime.onMessage.addListener(
-  (request, sender, sendResponse) => {
+  (request, _sender, _sendResponse) => {
     if (request.hasOwnProperty('message')) {
       setIcon(request.message)
     }
   })
 
-chrome.browserAction.onClicked.addListener((tab) => {
+chrome.action.onClicked.addListener((_tab) => {
   handleCommand('toggle_mute')
 })
 
@@ -49,14 +49,14 @@ function setIcon(status) {
     iconType = '_' + status
   }
   let title = status.charAt(0).toUpperCase() + status.substr(1)
-  chrome.browserAction.setIcon({
+  chrome.action.setIcon({
     path: {
       "32": `icons/icon32${ iconType }.png`,
       "48": `icons/icon48${ iconType }.png`,
       "128": `icons/icon128${ iconType }.png`
     }
   })
-  chrome.browserAction.setTitle({
+  chrome.action.setTitle({
     title: title
   })
 }

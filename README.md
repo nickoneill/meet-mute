@@ -1,5 +1,11 @@
+# Meet Mute
+
+## IMPORTANT
+
+This project is a manifest-v3-compatible version of the already amazing [https://github.com/mattsimonis/meet-mute](https://github.com/mattsimonis/meet-mute)
+
 <p align="center">
-<img src="https://raw.githubusercontent.com/mattsimonis/meet-mute/master/logo.png" alt="Meet Mute" style="max-width:100%;" width="64" height="64">
+    <img src="https://raw.githubusercontent.com/mattsimonis/meet-mute/master/logo.png" alt="Meet Mute" style="max-width:100%;" width="64" height="64">
 </p>
 
 <h1 align="center">Meet Mute</h1>
