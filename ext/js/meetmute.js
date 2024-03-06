@@ -1,4 +1,5 @@
 const MUTE_BUTTON = '[role="button"][aria-label][data-is-muted]'
+const RAISE_HAND_BUTTON = '[role="button"][aria-label][aria-pressed]'
 const BROWSER = chrome || browser; // polyfill
 
 const audio_on = new Audio(chrome.runtime.getURL('../sounds/on.mp3'));
@@ -35,6 +36,7 @@ const waitUntilElementExists = (DOMSelector, MAX_TIME = 5000) => {
 
 var waitingForMuteButton = false
 
+// this waits for the mic button to exist and we assume camera appears at the same time
 function waitForMuteButton() {
   if (waitingForMuteButton) {
     return
@@ -47,21 +49,35 @@ function waitForMuteButton() {
       watchIsMuted(el)
     })
     .catch((error) => {
-      chrome.extension.sendMessage({ message: 'disconnected' })
+      console.log("error: "+error)
+      chrome.runtime.sendMessage({ message: 'disconnected' })
     })
 }
 
 var muted = false
+var camMuted = false
+var handRaised = false
 
-function isMuted() {
-  let dataIsMuted = document.querySelector(MUTE_BUTTON)
+function isMuted(index) {
+  if (index == null) { index = 0; }
+  let muteButtons = document.querySelectorAll(MUTE_BUTTON)
+  if (muteButtons.length < 2) {
+    console.error("button check didn't find two buttons");
+  }
+  let dataIsMuted = muteButtons[index]
       .getAttribute('data-is-muted')
   return dataIsMuted == 'true'
 }
 
-function updateMuted(newValue) {
-  muted = newValue || isMuted()
-  chrome.extension.sendMessage({ message: muted ? 'muted' : 'unmuted' })
+function isHandRaised() {
+  let handIsRaised = document.querySelectorAll(RAISE_HAND_BUTTON)[2]
+      .getAttribute('aria-pressed')
+  return handIsRaised == 'true'
+}
+
+function updateMuted(newValue, index) {
+  muted = newValue || isMuted(index)
+  chrome.runtime.sendMessage({ message: muted ? 'muted' : 'unmuted' })
 }
 
 var isMutedObserver
@@ -100,26 +116,36 @@ function watchBodyClass() {
 watchBodyClass()
 
 window.onbeforeunload = (event) => {
-  chrome.extension.sendMessage({ message: 'disconnected' })
+  chrome.runtime.sendMessage({ message: 'disconnected' })
 }
 
 chrome.runtime.onMessage.addListener(
   (request, sender, sendResponse) => {
-    muted = isMuted()
 
     if (request && request.command && request.command === 'toggle_mute') {
+      muted = isMuted()
       muted = !muted
-      sendKeyboardCommand()
+      sendKeyboardCommand(keydownEvent)
     } else if (request && request.command && request.command === 'mute') {
+      muted = isMuted()
       if (!muted) {
         muted = !muted
-        sendKeyboardCommand()
+        sendKeyboardCommand(keydownEvent)
       }
     } else if (request && request.command && request.command === 'unmute') {
+      muted = isMuted()
       if (muted) {
         muted = !muted
-        sendKeyboardCommand()
+        sendKeyboardCommand(keydownEvent)
       }
+    } else if (request && request.command && request.command === 'toggle_cam') {
+      camMuted = isMuted(1)
+      camMuted = !camMuted
+      sendKeyboardCommand(keydownEventCam)
+    } else if (request && request.command && request.command === 'toggle_hand') {
+      handRaised = isHandRaised()
+      handRaised = !handRaised
+      sendKeyboardCommand(keydownEventHand)
     }
 
     if (has_audio) {
@@ -144,6 +170,25 @@ const keydownEvent = new KeyboardEvent('keydown', {
   "which": 100
 })
 
-function sendKeyboardCommand() {
-  document.dispatchEvent(keydownEvent)
+const keydownEventCam = new KeyboardEvent('keydown', {
+  "key": "e",
+  "code": "KeyE",
+  "metaKey": true,
+  "charCode": 101,
+  "keyCode": 101,
+  "which": 101
+})
+
+const keydownEventHand = new KeyboardEvent('keydown', {
+  "key": "h",
+  "code": "KeyH",
+  "ctrlKey": true,
+  "metaKey": true,
+  "charCode": 72,
+  "keyCode": 72,
+  "which": 72
+})
+
+function sendKeyboardCommand(event) {
+  document.dispatchEvent(event)
 }

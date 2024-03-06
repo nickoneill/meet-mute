@@ -45,17 +45,17 @@
             },
             "global": true
         },
-        "mute": {
-            "description": "Mute",
+        "toggle_cam": {
+            "description": "Toggle Camera",
             "suggested_key": {
-                "default": "Ctrl+Shift+M"
+                "default": "Ctrl+Shift+C"
             },
             "global": true
         },
-        "unmute": {
-            "description": "Unmute",
+        "toggle_hand": {
+            "description": "Toggle Raise Hand",
             "suggested_key": {
-                "default": "Ctrl+Shift+B"
+                "default": "Ctrl+Shift+H"
             },
             "global": true
         }
