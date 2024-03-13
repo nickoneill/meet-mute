@@ -1,5 +1,10 @@
 const MUTE_BUTTON = '[role="button"][aria-label][data-is-muted]'
 const RAISE_HAND_BUTTON = '[role="button"][aria-label][aria-pressed]'
+const REACTION_BUTTON = '[role="button"][aria-label="Send a reaction"]'
+const THUMBS_UP_BUTTON = '[role="button"][aria-label="👍"]'
+const CELEBRATE_BUTTON = '[role="button"][aria-label="🎉"]'
+const HMM_BUTTON = '[role="button"][aria-label="🤔"]'
+const HEART_BUTTON = '[role="button"][aria-label="💖"]'
 const BROWSER = chrome || browser; // polyfill
 
 const audio_on = new Audio(chrome.runtime.getURL('../sounds/on.mp3'));
@@ -50,6 +55,25 @@ function waitForMuteButton() {
     })
     .catch((error) => {
       console.log("error: "+error)
+      chrome.runtime.sendMessage({ message: 'disconnected' })
+    })
+}
+
+var waitingForReactionPanel = false
+
+// waits until the reaction panel is open
+function waitForReactions(fn) {
+  if (waitingForReactionPanel) {
+    return
+  } 
+
+  waitingForReactionPanel = true
+  waitUntilElementExists(THUMBS_UP_BUTTON)
+    .then((el) => {
+      waitingForReactionPanel = false
+      fn()
+    })
+    .catch((error) => {
       chrome.runtime.sendMessage({ message: 'disconnected' })
     })
 }
@@ -146,6 +170,46 @@ chrome.runtime.onMessage.addListener(
       handRaised = isHandRaised()
       handRaised = !handRaised
       sendKeyboardCommand(keydownEventHand)
+    } else if (request && request.command && request.command === 'send_thumbsup') {
+      if (document.querySelector(THUMBS_UP_BUTTON) !== null) {
+        document.querySelector(THUMBS_UP_BUTTON).click();
+      } else {
+        document.querySelector(REACTION_BUTTON).click();
+        waitForReactions(() => {
+          document.querySelector(THUMBS_UP_BUTTON).click();
+          document.querySelector(REACTION_BUTTON).click();
+        })
+      }
+    } else if (request && request.command && request.command === 'send_celebrate') {
+      if (document.querySelector(CELEBRATE_BUTTON) !== null) {
+        document.querySelector(CELEBRATE_BUTTON).click();
+      } else {
+        document.querySelector(REACTION_BUTTON).click();
+        waitForReactions(() => {
+          document.querySelector(CELEBRATE_BUTTON).click();
+          document.querySelector(REACTION_BUTTON).click();
+        })
+      }
+    } else if (request && request.command && request.command === 'send_hmm') {
+      if (document.querySelector(HMM_BUTTON) !== null) {
+        document.querySelector(HMM_BUTTON).click();
+      } else {
+        document.querySelector(REACTION_BUTTON).click();
+        waitForReactions(() => {
+          document.querySelector(HMM_BUTTON).click();
+          document.querySelector(REACTION_BUTTON).click();
+        })
+      }
+    } else if (request && request.command && request.command === 'send_heart') {
+      if (document.querySelector(HEART_BUTTON) !== null) {
+        document.querySelector(HEART_BUTTON).click();
+      } else {
+        document.querySelector(REACTION_BUTTON).click();
+        waitForReactions(() => {
+          document.querySelector(HEART_BUTTON).click();
+          document.querySelector(REACTION_BUTTON).click();
+        })
+      }
     }
 
     if (has_audio) {

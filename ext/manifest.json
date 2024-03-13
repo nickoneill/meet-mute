@@ -40,23 +40,30 @@
     "commands": {
         "toggle_mute": {
             "description": "Toggle Mute",
-            "suggested_key": {
-                "default": "Ctrl+Shift+L"
-            },
             "global": true
         },
         "toggle_cam": {
             "description": "Toggle Camera",
-            "suggested_key": {
-                "default": "Ctrl+Shift+C"
-            },
             "global": true
         },
         "toggle_hand": {
             "description": "Toggle Raise Hand",
-            "suggested_key": {
-                "default": "Ctrl+Shift+H"
-            },
+            "global": true
+        },
+        "send_thumbsup": {
+            "description": "Send Thumbs Up",
+            "global": true
+        },
+        "send_celebrate": {
+            "description": "Send Celebrate",
+            "global": true
+        },
+        "send_hmm": {
+            "description": "Send Hmm",
+            "global": true
+        },
+        "send_heart": {
+            "description": "Send Heart",
             "global": true
         }
     },
